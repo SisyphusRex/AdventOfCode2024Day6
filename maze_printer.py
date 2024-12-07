@@ -36,5 +36,17 @@ class MazePrinter:
                         print_success("X", "")
                     case "O":
                         print_error("O", "")
+                    case "|":
+                        print_success("|", "")
+                    case "-":
+                        print_success("-", "")
+                    case "u":
+                        print_success("u", "")
+                    case "r":
+                        print_success("r", "")
+                    case "d":
+                        print_success("d", "")
+                    case "l":
+                        print_success("l", "")
             print()
         print()

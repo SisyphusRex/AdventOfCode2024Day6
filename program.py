@@ -6,9 +6,13 @@
 
 # System Imports
 from func_timeout import func_timeout, FunctionTimedOut
+import copy
+import sys
+
 # First-party imports
 from maze_solver import MazeSolver
 from maze_printer import MazePrinter
+from errors import InfiniteLoopError
 
 
 def main(*args):
@@ -21,28 +25,20 @@ def main(*args):
     x_start, y_start = get_start_point(maze)
     for y_index, row_list in enumerate(maze):
         for x_index, character in enumerate(row_list):
+            new_maze = copy.deepcopy(maze)
             if character == ".":
-                maze[y_index][x_index] = "#"
+                new_maze[y_index][x_index] = "#"
+                # my_printer.print_maze(new_maze)
+                try:
+                    my_solver.solve_maze(new_maze, x_start, y_start)
 
-            try:
+                except InfiniteLoopError:
+                    # my_printer.print_maze(new_maze)
+                    infinite_loop_count += 1
 
-
-                func_timeout(.1, my_solver.solve_maze, args=(maze, x_start, y_start))
-
-            except FunctionTimedOut:
-
-                infinite_loop_count += 1
-
-
-
-            maze[y_index][x_index] = "."
+            new_maze[y_index][x_index] = "."
 
     print(f"infinite_loop_count: {infinite_loop_count}")
-
-
-
-
-
 
 
 def find_xs():
@@ -55,6 +51,7 @@ def find_xs():
     my_printer.print_maze(maze)
     x_count = count_x(maze)
     print(x_count)
+
 
 def read_maze(filename):
     """Reads a maze from a text file and returns it as a list of lists."""
@@ -72,6 +69,7 @@ def get_start_point(maze):
             if char == "^":
                 char = "."
                 return (x_index, y_index)
+
 
 def count_x(maze):
     """count number of xs in maze"""

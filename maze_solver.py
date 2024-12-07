@@ -4,6 +4,7 @@
 
 # First Party Imports
 from maze_printer import MazePrinter
+from errors import InfiniteLoopError
 
 
 class MazeSolver:
@@ -37,7 +38,6 @@ class MazeSolver:
         # I must reset the bool here to reuse the maze_solver instance later
         self.solving = True
 
-
     def __maze_traversal(self, maze, current_x, current_y):
         """This should be the recursive method that gets called to solve the maze.
         Feel free to have it return something if you would like. But, it can be
@@ -67,19 +67,27 @@ class MazeSolver:
                         case "up":
                             self.direction = "right"
                             if self.solving:
-                                self.__maze_traversal(maze, current_x + 1, current_y + 1)
+                                self.__maze_traversal(
+                                    maze, current_x + 1, current_y + 1
+                                )
                         case "right":
                             self.direction = "down"
                             if self.solving:
-                                self.__maze_traversal(maze, current_x - 1, current_y + 1)
+                                self.__maze_traversal(
+                                    maze, current_x - 1, current_y + 1
+                                )
                         case "down":
                             self.direction = "left"
                             if self.solving:
-                                self.__maze_traversal(maze, current_x - 1, current_y - 1)
+                                self.__maze_traversal(
+                                    maze, current_x - 1, current_y - 1
+                                )
                         case "left":
                             self.direction = "up"
                             if self.solving:
-                                self.__maze_traversal(maze, current_x + 1, current_y - 1)
+                                self.__maze_traversal(
+                                    maze, current_x + 1, current_y - 1
+                                )
                     print(self.direction)
                     return
                 # Movement
@@ -138,9 +146,13 @@ class MazeSolver:
         counter = 0
         while self.solving:
             try:
+                if current_x < 0:
+                    break
+                if current_y < 0:
+                    break
                 match maze[current_y][current_x]:
                     case "^":
-                        maze[current_y][current_x] = "X"
+                        maze[current_y][current_x] = "u"
                         match self.direction:
                             case "up":
                                 current_y = current_y - 1
@@ -151,7 +163,6 @@ class MazeSolver:
                             case "left":
                                 current_x = current_x - 1
                     case "#":
-
                         match self.direction:
                             case "up":
                                 self.direction = "right"
@@ -166,29 +177,72 @@ class MazeSolver:
                                 self.direction = "up"
                                 current_x = current_x + 1
 
-
                     case ".":
-                        maze[current_y][current_x] = "X"
+                        if self.direction == "up":
+                            maze[current_y][current_x] = "u"
+                            current_y = current_y - 1
+                        if self.direction == "right":
+                            maze[current_y][current_x] = "r"
+                            current_x = current_x + 1
+                        if self.direction == "down":
+                            maze[current_y][current_x] = "d"
+                            current_y = current_y + 1
+                        if self.direction == "left":
+                            maze[current_y][current_x] = "l"
+                            current_x = current_x - 1
+
+                    case "u":
+                        if self.direction == "up":
+                            maze[current_y][current_x] = "O"
+                            raise InfiniteLoopError
+
+                        if self.direction == "right":
+                            current_x = current_x + 1
+                        if self.direction == "down":
+                            current_y = current_y + 1
+
+                        if self.direction == "left":
+                            current_x = current_x - 1
+
+                    case "r":
                         if self.direction == "up":
                             current_y = current_y - 1
                         if self.direction == "right":
-                            current_x = current_x + 1
+                            maze[current_y][current_x] = "O"
+                            raise InfiniteLoopError
+
                         if self.direction == "down":
                             current_y = current_y + 1
                         if self.direction == "left":
                             current_x = current_x - 1
 
-                    case "X":
+                    case "d":
                         if self.direction == "up":
                             current_y = current_y - 1
                         if self.direction == "right":
                             current_x = current_x + 1
+
+                        if self.direction == "down":
+                            maze[current_y][current_x] = "O"
+                            raise InfiniteLoopError
+                        if self.direction == "left":
+                            current_x = current_x - 1
+
+                    case "l":
+                        if self.direction == "up":
+                            current_y = current_y - 1
+                        if self.direction == "right":
+                            current_x = current_x + 1
+
                         if self.direction == "down":
                             current_y = current_y + 1
                         if self.direction == "left":
-                            current_x = current_x - 1
+                            maze[current_y][current_x] = "O"
+                            raise InfiniteLoopError
 
                 # self.my_printer.print_maze(maze)
 
             except IndexError:
+
                 self.solving = False
+                break
