@@ -1,8 +1,6 @@
 """Program code"""
 
-# Walter Podewil
-# CIS 226
-# 09/25/2024
+
 
 # System Imports
 from func_timeout import func_timeout, FunctionTimedOut
