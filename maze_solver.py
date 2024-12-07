@@ -21,6 +21,7 @@ class MazeSolver:
         # this attribute keeps track of whether the maze is solved or not
         self.solving: bool = True
         self.direction = "up"
+        self.max_iterations = 0
 
         # this attribute saves the bottom row index and
 
@@ -30,10 +31,12 @@ class MazeSolver:
         But, it can be done exactly as it is here without adding anything other
         than code in the body."""
         self.direction = "up"
+
         self.__iterative_traversal(maze, x_start, y_start)
 
         # I must reset the bool here to reuse the maze_solver instance later
         self.solving = True
+
 
     def __maze_traversal(self, maze, current_x, current_y):
         """This should be the recursive method that gets called to solve the maze.
@@ -132,6 +135,7 @@ class MazeSolver:
         """iterative version"""
         current_x = x_start
         current_y = y_start
+        counter = 0
         while self.solving:
             try:
                 match maze[current_y][current_x]:
@@ -147,8 +151,7 @@ class MazeSolver:
                             case "left":
                                 current_x = current_x - 1
                     case "#":
-                        print(self.direction)
-                        print(f"x: {current_x} y: {current_y}")
+
                         match self.direction:
                             case "up":
                                 self.direction = "right"
@@ -162,8 +165,8 @@ class MazeSolver:
                             case "left":
                                 self.direction = "up"
                                 current_x = current_x + 1
-                        print(self.direction)
-                        print(f"x: {current_x} y: {current_y}")
+
+
                     case ".":
                         maze[current_y][current_x] = "X"
                         if self.direction == "up":
@@ -189,4 +192,3 @@ class MazeSolver:
 
             except IndexError:
                 self.solving = False
-                print("solved")

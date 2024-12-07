@@ -4,6 +4,8 @@
 # CIS 226
 # 09/25/2024
 
+# System Imports
+from func_timeout import func_timeout, FunctionTimedOut
 # First-party imports
 from maze_solver import MazeSolver
 from maze_printer import MazePrinter
@@ -11,7 +13,36 @@ from maze_printer import MazePrinter
 
 def main(*args):
     """Method to run program"""
+    my_solver = MazeSolver()
+    my_printer = MazePrinter()
     maze = read_maze("input_maze.txt")
+    infinite_loop_count = 0
+
+    x_start, y_start = get_start_point(maze)
+    for y_index, row_list in enumerate(maze):
+        for x_index, character in enumerate(row_list):
+            if character == ".":
+                maze[y_index][x_index] = "#"
+
+            try:
+
+
+                func_timeout(.1, my_solver.solve_maze, args=(maze, x_start, y_start))
+
+            except FunctionTimedOut:
+
+                infinite_loop_count += 1
+
+
+
+            maze[y_index][x_index] = "."
+
+    print(f"infinite_loop_count: {infinite_loop_count}")
+
+
+
+
+
 
 
 def find_xs():
