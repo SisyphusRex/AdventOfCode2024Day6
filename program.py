@@ -1,8 +1,6 @@
 """Program code"""
 
-# Walter Podewil
-# CIS 226
-# 09/25/2024
+
 
 # First-party imports
 from maze_solver import MazeSolver
