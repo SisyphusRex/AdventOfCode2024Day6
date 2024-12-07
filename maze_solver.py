@@ -29,8 +29,8 @@ class MazeSolver:
         Feel free to change the return type, or add more parameters if you like.
         But, it can be done exactly as it is here without adding anything other
         than code in the body."""
-        print("made it to traversal")
-        self.__maze_traversal(maze, x_start, y_start)
+        self.direction = "up"
+        self.__iterative_traversal(maze, x_start, y_start)
 
         # I must reset the bool here to reuse the maze_solver instance later
         self.solving = True
@@ -63,12 +63,20 @@ class MazeSolver:
                     match self.direction:
                         case "up":
                             self.direction = "right"
+                            if self.solving:
+                                self.__maze_traversal(maze, current_x + 1, current_y + 1)
                         case "right":
                             self.direction = "down"
+                            if self.solving:
+                                self.__maze_traversal(maze, current_x - 1, current_y + 1)
                         case "down":
                             self.direction = "left"
+                            if self.solving:
+                                self.__maze_traversal(maze, current_x - 1, current_y - 1)
                         case "left":
                             self.direction = "up"
+                            if self.solving:
+                                self.__maze_traversal(maze, current_x + 1, current_y - 1)
                     print(self.direction)
                     return
                 # Movement
@@ -77,17 +85,40 @@ class MazeSolver:
                     if self.solving:
                         self.my_printer.print_maze(maze)
                     # move up
-                    if self.solving:
-                        self.__maze_traversal(maze, current_x, current_y - 1)
+                    if self.direction == "up":
+                        if self.solving:
+                            self.__maze_traversal(maze, current_x, current_y - 1)
                     # move right
-                    if self.solving:
-                        self.__maze_traversal(maze, current_x + 1, current_y)
+                    if self.direction == "right":
+                        if self.solving:
+                            self.__maze_traversal(maze, current_x + 1, current_y)
                     # move down
-                    if self.solving:
-                        self.__maze_traversal(maze, current_x, current_y + 1)
+                    if self.direction == "down":
+                        if self.solving:
+                            self.__maze_traversal(maze, current_x, current_y + 1)
                     # move left
+                    if self.direction == "left":
+                        if self.solving:
+                            self.__maze_traversal(maze, current_x - 1, current_y)
+                case "X":
                     if self.solving:
-                        self.__maze_traversal(maze, current_x - 1, current_y)
+                        self.my_printer.print_maze(maze)
+                    # move up
+                    if self.direction == "up":
+                        if self.solving:
+                            self.__maze_traversal(maze, current_x, current_y - 1)
+                    # move right
+                    if self.direction == "right":
+                        if self.solving:
+                            self.__maze_traversal(maze, current_x + 1, current_y)
+                    # move down
+                    if self.direction == "down":
+                        if self.solving:
+                            self.__maze_traversal(maze, current_x, current_y + 1)
+                    # move left
+                    if self.direction == "left":
+                        if self.solving:
+                            self.__maze_traversal(maze, current_x - 1, current_y)
 
             if self.solving:
                 self.my_printer.print_maze(maze)
@@ -96,3 +127,66 @@ class MazeSolver:
             print("Out of range.")
             self.solving = False
             pass
+
+    def __iterative_traversal(self, maze, x_start, y_start):
+        """iterative version"""
+        current_x = x_start
+        current_y = y_start
+        while self.solving:
+            try:
+                match maze[current_y][current_x]:
+                    case "^":
+                        maze[current_y][current_x] = "X"
+                        match self.direction:
+                            case "up":
+                                current_y = current_y - 1
+                            case "right":
+                                current_x = current_x + 1
+                            case "down":
+                                current_y = current_y + 1
+                            case "left":
+                                current_x = current_x - 1
+                    case "#":
+                        print(self.direction)
+                        print(f"x: {current_x} y: {current_y}")
+                        match self.direction:
+                            case "up":
+                                self.direction = "right"
+                                current_y = current_y + 1
+                            case "right":
+                                self.direction = "down"
+                                current_x = current_x - 1
+                            case "down":
+                                self.direction = "left"
+                                current_y = current_y - 1
+                            case "left":
+                                self.direction = "up"
+                                current_x = current_x + 1
+                        print(self.direction)
+                        print(f"x: {current_x} y: {current_y}")
+                    case ".":
+                        maze[current_y][current_x] = "X"
+                        if self.direction == "up":
+                            current_y = current_y - 1
+                        if self.direction == "right":
+                            current_x = current_x + 1
+                        if self.direction == "down":
+                            current_y = current_y + 1
+                        if self.direction == "left":
+                            current_x = current_x - 1
+
+                    case "X":
+                        if self.direction == "up":
+                            current_y = current_y - 1
+                        if self.direction == "right":
+                            current_x = current_x + 1
+                        if self.direction == "down":
+                            current_y = current_y + 1
+                        if self.direction == "left":
+                            current_x = current_x - 1
+
+                # self.my_printer.print_maze(maze)
+
+            except IndexError:
+                self.solving = False
+                print("solved")
