@@ -1,8 +1,6 @@
 """Console Color Helpers"""
 
-# Walter Podewil
-# CIS 226
-# 09/25/2024
+
 # I modified this file from the original.  The methods take in an extra argument
 # to allow better printing customization.
 
